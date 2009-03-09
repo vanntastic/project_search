@@ -29,16 +29,20 @@ class ProjectSearch
 
     exts = %w(rb rjs rhtml rxml erb builder css js html haml sass).join(',')
     globs = paths.map { |path| File.join(path, "**", "*.{#{exts}}") }
-
+    
+    @results = ""
     globs.each do |glob|
       Dir.glob(glob).each do |file|
         number = 1
         IO.foreach(file) do |line|
-          puts "%s:%d:%s" % [file, number, line] if line =~ term
+          # puts "----\n%s:%d:\n%s" % [file, number, line] if line =~ term
+          @results << "----\n- %s:%d:\n%s" % [file, number, line] if line =~ term
           number += 1
         end
       end
     end
+    
+    system('echo "' << @results << '" | less')
   end
 
   private
